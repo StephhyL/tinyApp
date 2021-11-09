@@ -63,6 +63,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 })
 
+app.post("/urls/:shortURL", (req, res) => {
+  res.redirect("urls");
+})
+
 
 
 // app.get("/set", (req, res) => {
