@@ -12,7 +12,7 @@ const urlDatabase = {
 };
 
 const generateRandomString = () => {
-  let randomString = (Math.random() + 1).toString(36).substring(1, 7);
+  let randomString = (Math.random() + 1).toString(36).substring(2, 8);
   return randomString;
 }
 
@@ -51,20 +51,32 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  let shortURL = generateRandomString();
-  let longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
   console.log(urlDatabase);
   res.redirect(`urls/${shortURL}`)
 })
+
+
+//can this be urls/:shortURLs??
+app.post("/urls/:id", (req, res)=>{
+  const shortURL = req.params.id;
+  const newlongURL = req.body.newLongURL;
+  urlDatabase[shortURL] = newlongURL;
+  res.redirect('/urls')
+})
+
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls");
 })
 
-app.post("/urls/:shortURL", (req, res) => {
-  res.redirect("urls");
+//click on edit button, it will bring redirect server to views urls/:shortURL
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  res.redirect(`/urls/${shortURL}`);
 })
 
 
