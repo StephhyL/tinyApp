@@ -1,7 +1,9 @@
-const express = require('express');
+const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 const PORT = 8080; 
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -36,7 +38,10 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars)
 })
 
-
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send("Ok");
+})
 
 
 // app.get("/set", (req, res) => {
