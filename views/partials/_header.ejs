@@ -17,15 +17,18 @@
     <% if (username) { %>
     <form class="form-inline" method="POST" action="/logout">
       <div class="form group mr-1">
-        <p>Logged In As: <%= username %></p>
-        <button type="logout" class="btn btn-outline-dark">Logout</button>
+        <p class="card-text"> Logged In As: <%= username %>!
+          <button type="logout" class="btn btn-outline-dark ml-3">Logout</button>
+        </p>
       </div>
     </form>
     <% } else { %>
     <form class="form-inline" method="POST" action="/login">
       <div class="form group mr-1">
-        <input class="form-control" type="text" name="username" placeholder="Username" style="width:200px; margin:1em">
-        <button type="login" class="btn btn-outline-dark">Login</button>
+        <p class="card-text">
+          <input class="form-control" type="text" name="username" placeholder="Username" style="width:200px">
+          <button type="login" class="btn btn-outline-dark">Login</button>
+        </p>
       </div>
     </form>
     <% } %>
