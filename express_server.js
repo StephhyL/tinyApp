@@ -46,10 +46,11 @@ const generateRandomString = () => {
 //   return false;
 // };
 
+//return the object value of the user
 const getUserByEmail = (email) => {
   for (let key in users) {
     if (email === users[key].email) {
-      return key;
+      return users[key];
     }
   }
   return false;
@@ -74,7 +75,11 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req,res) => {
   const templateVars = {user_id: req.cookies["user_id"], users};
-  res.render("urls_new", templateVars);
+  if(req.cookies["user_id"]) {
+    res.render("urls_new", templateVars);
+    return;
+  }
+  res.send("Please login to create new URL!")
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -128,9 +133,9 @@ app.post("/login", (req, res) => {
   // users object's key
 
   if (user) {
-    if(users[user].password === inputPassword) {
+    if(user.password === inputPassword) {
       res.cookie("user_id", user);
-      console.log("user_id value of user", user)
+      console.log("user_id value of user", user.id)
       res.redirect("/urls");
     }
   } else {
