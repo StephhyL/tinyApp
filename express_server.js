@@ -23,6 +23,11 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
+  },
+  "555": {
+    id: "555",
+    email: "a@b.com",
+    password: "c"
   }
 };
 
@@ -32,22 +37,22 @@ const generateRandomString = () => {
 };
 
 //checks if a user exists by their email
-const exisitingEmail = (email) => {
-  for (let user in users) {
-    if (email === users[user].email) {
-      return true;
+// const exisitingEmail = (email) => {
+//   for (let user in users) {
+//     if (email === users[user].email) {
+//       return true;
+//     }
+//   }
+//   return false;
+// };
+
+const getUserByEmail = (email) => {
+  for (let key in users) {
+    if (email === users[key].email) {
+      return users[key];
     }
   }
   return false;
-};
-
-const getUserByEmail = (email) => {
-  for (let user in users) {
-    if (email === users[user].email) {
-      return user;
-    }
-  }
-  return "No user found!";
 };
 
 app.get("/", (req, res) => {
@@ -119,18 +124,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
+  const user = getUserByEmail(inputEmail);
 
-  if (!exisitingEmail(email)) {
+  if (user) {
+    if(user.password === inputPassword) {
+      res.cookie("user_id", user);
+      res.redirect("/urls");
+    }
+  } else {
     res.statusCode = 403;
-    res.send(`${res.statusCode} Error! E-mail cannot be found`);
-    return;
-  } else if (true) {
-    res.statusCode = 403;
-    res.send(`${res.statusCode} Error! Password does not match our records!`);
+    res.send(`${res.statusCode} Error! Invalid E-mail and/or password!`);
   }
 
-  res.cookie("user_id", req.body["user_id"]);
-  res.redirect("/urls");
 });
 
 app.post("/logout", (req,res) => {
@@ -147,14 +152,15 @@ app.post("/register", (req, res) => {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! Please input an email and/or password`);
     return;
-  } else if (exisitingEmail(email)) {
+  } else if (getUserByEmail(email)) {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! E-mail already exists`);
     return;
+  }else{
+    users[id] = {id, email, password};
+    res.cookie("user_id", id);
+    res.redirect("/urls");
   }
-  users[id] = {id, email, password};
-  res.cookie("user_id", id);
-  res.redirect("/urls");
 });
 
 
