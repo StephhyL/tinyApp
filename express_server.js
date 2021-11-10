@@ -109,9 +109,17 @@ app.get("/urls/new", (req,res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const personalDb = urlsForUser(req.cookies["user_id"], urlDatabase);
   const shortURL = req.params.shortURL;
+  if(!req.cookies["user_id"]) {
+    const loginMessage = {message: "Please login to view your URLs", user_id: req.cookies["user_id"], users}
+    res.render("error.ejs", loginMessage)
+  }else if (personalDb[shortURL] === undefined) {
+    const messageOb = {message: "Sorry, you do not have this URL", user_id: req.cookies["user_id"], users}
+    res.render("error.ejs", messageOb)
+  }else{
   const longURL = personalDb[req.params.shortURL].longURL;
   const templateVars = {user_id: req.cookies["user_id"],shortURL, longURL, users};
   res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -149,14 +157,23 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
   const newlongURL = req.body.newLongURL;
-  urlDatabase[shortURL].longURL = newlongURL;
-  res.redirect('/urls');
+  const addURLUserId = urlDatabase[req.params.id].userID;
+  if(req.cookies["user_id"] === addURLUserId) {
+    urlDatabase[shortURL].longURL = newlongURL;
+    res.redirect('/urls');
+  }
+  res.status(418).send("Teapots can't brew coffee!")
 });
 
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  //if I am the user, then only I can delete from the masterDB
+  const deleteURLUserId = urlDatabase[req.params.shortURL].userID;
+  if(req.cookies["user_id"] === deleteURLUserId){
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  }
+  res.status(418).send("Don't throw out my tea!")
 });
 
 app.post("/login", (req, res) => {
@@ -165,7 +182,6 @@ app.post("/login", (req, res) => {
   const user = getUserByEmail(inputEmail);
   // users object's key
   // console.log(user)
-
 
   if (user) {
     if(user.password === inputPassword) {
