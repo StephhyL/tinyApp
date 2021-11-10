@@ -94,8 +94,12 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if(urlDatabase[req.params.shortURL] !== undefined){
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
+  }else{
+    res.send("Short URL ID does not exist.")
+  }
 });
 
 app.get("/register", (req,res) => {
