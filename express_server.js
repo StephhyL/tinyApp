@@ -15,7 +15,7 @@ const urlDatabase = {
   },
   i3BoGr: {
       longURL: "https://www.google.ca",
-      userID: "aJ48lW"
+      userID: "userRandomID"
   }
 };
 
@@ -86,17 +86,24 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"],urls: urlDatabase, users};
-  res.render("urls_index", templateVars);
+  
+  if(req.cookies["user_id"]){
+    const templateVars = {user_id: req.cookies["user_id"],urls: urlDatabase, users};
+    res.render("urls_index", templateVars);
+  }else{
+    const messageOb = {message: "Please login to view URLs", user_id: req.cookies["user_id"], users}
+    res.render("error.ejs", messageOb)
+  }
 });
 
 app.get("/urls/new", (req,res) => {
   const templateVars = {user_id: req.cookies["user_id"], users};
   if(req.cookies["user_id"]) {
     res.render("urls_new", templateVars);
-    return;
+  }else{
+    const messageOb = {message: "Please login to create new URLs", user_id: req.cookies["user_id"], users}
+    res.render("error.ejs", messageOb)
   }
-  res.send("Please login to create new URL!")
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -109,7 +116,8 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   }else{
-    res.send("Short URL ID does not exist.")
+    const messageOb = {message: "Short URL ID does not exist", user_id: req.cookies["user_id"], users}
+    res.render("error.ejs", messageOb)
   }
 });
 
@@ -152,11 +160,12 @@ app.post("/login", (req, res) => {
   const inputPassword = req.body.password;
   const user = getUserByEmail(inputEmail);
   // users object's key
+  console.log(user)
 
   if (user) {
     if(user.password === inputPassword) {
-      res.cookie("user_id", user);
-      console.log("user_id value of user", user.id)
+      res.cookie("user_id", user.id);
+      // console.log("user_id value of user", user.id)
       res.redirect("/urls");
     }
   } else {
