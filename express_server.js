@@ -40,7 +40,7 @@ const users = {
 const urlsForUser = (id, database) => {
   // loop through the urlDatabase
   let personalURL = {};
-  for (let shortURL of database) {
+  for (let shortURL in database) {
     if (id === database[shortURL].userID) {
       personalURL[shortURL] = database[shortURL]
     }
@@ -86,9 +86,9 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  
-  if(req.cookies["user_id"]){
-    const templateVars = {user_id: req.cookies["user_id"],urls: urlDatabase, users};
+  const userID = req.cookies["user_id"]
+  if(userID){
+    const templateVars = {user_id: userID, urls: urlsForUser(userID, urlDatabase), users};
     res.render("urls_index", templateVars);
   }else{
     const messageOb = {message: "Please login to view URLs", user_id: req.cookies["user_id"], users}
@@ -107,7 +107,10 @@ app.get("/urls/new", (req,res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"],shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, users};
+  const personalDb = urlsForUser(req.cookies["user_id"], urlDatabase);
+  const shortURL = req.params.shortURL;
+  const longURL = personalDb[req.params.shortURL].longURL;
+  const templateVars = {user_id: req.cookies["user_id"],shortURL, longURL, users};
   res.render("urls_show", templateVars);
 });
 
@@ -133,10 +136,11 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+
+  // now I need to add the URL into the personal database
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  console.log(urlDatabase);
+  urlDatabase[shortURL] = {longURL, userID:req.cookies["user_id"]};
   res.redirect(`urls/${shortURL}`);
 });
 
@@ -160,7 +164,8 @@ app.post("/login", (req, res) => {
   const inputPassword = req.body.password;
   const user = getUserByEmail(inputEmail);
   // users object's key
-  console.log(user)
+  // console.log(user)
+
 
   if (user) {
     if(user.password === inputPassword) {
