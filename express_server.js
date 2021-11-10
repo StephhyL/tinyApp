@@ -49,7 +49,7 @@ const generateRandomString = () => {
 const getUserByEmail = (email) => {
   for (let key in users) {
     if (email === users[key].email) {
-      return users[key];
+      return key;
     }
   }
   return false;
@@ -125,10 +125,12 @@ app.post("/login", (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
   const user = getUserByEmail(inputEmail);
+  // users object's key
 
   if (user) {
-    if(user.password === inputPassword) {
+    if(users[user].password === inputPassword) {
       res.cookie("user_id", user);
+      console.log("user_id value of user", user)
       res.redirect("/urls");
     }
   } else {
