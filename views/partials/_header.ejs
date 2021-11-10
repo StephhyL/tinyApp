@@ -14,21 +14,21 @@
       </div>
     </div>
 
-    <%- if (!<%= username %>) { %>
-    <form class="form-inline" method="" action="">
+    <% if (username) { %>
+    <form class="form-inline" method="POST" action="/logout">
       <div class="form group mr-1">
         <p>Logged In As: <%= username %></p>
         <button type="logout" class="btn btn-outline-dark">Logout</button>
       </div>
     </form>
-    <%- } else if { %>
+    <% } else { %>
     <form class="form-inline" method="POST" action="/login">
       <div class="form group mr-1">
         <input class="form-control" type="text" name="username" placeholder="Username" style="width:200px; margin:1em">
         <button type="login" class="btn btn-outline-dark">Login</button>
       </div>
     </form>
-    <%- } %>
+    <% } %>
 
 
   </nav>
