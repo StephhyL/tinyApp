@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcryptjs');
+// const salt = bcrypt.genSaltSync(10);
+// const hash = bcrypt.hashSync("B4c0/\/", salt);
 const app = express();
 const PORT = 8080;
 
@@ -23,17 +26,17 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password:  bcrypt.hashSync("dishwasher-funk", 10)
   },
   "555": {
     id: "555",
     email: "a@b.com",
-    password: "c"
+    password:  bcrypt.hashSync("c",10)
   }
 };
 
@@ -183,12 +186,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
+  const hashedInputPw = bcrypt.hashSync(inputPassword, 10);
   const user = getUserByEmail(inputEmail);
   // users object's key
   // console.log(user)
 
   if (user) {
-    if(user.password === inputPassword) {
+    if(bcrypt.compare(user.password, hashedInputPw)) {
       res.cookie("user_id", user.id);
       // console.log("user_id value of user", user.id)
       res.redirect("/urls");
@@ -209,6 +213,10 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  console.log("password-->", password);
+  console.log("hashedPassword-->", hashedPassword);
 
   if (email === "" || password === "") {
     res.statusCode = 400;
@@ -219,7 +227,7 @@ app.post("/register", (req, res) => {
     res.send(`${res.statusCode} Error! E-mail already exists`);
     return;
   }else{
-    users[id] = {id, email, password};
+    users[id] = {id, email, password: hashedPassword};
     res.cookie("user_id", id);
     res.redirect("/urls");
   }
