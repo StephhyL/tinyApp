@@ -37,6 +37,17 @@ const users = {
   }
 };
 
+const urlsForUser = (id, database) => {
+  // loop through the urlDatabase
+  let personalURL = {};
+  for (let shortURL of database) {
+    if (id === database[shortURL].userID) {
+      personalURL[shortURL] = database[shortURL]
+    }
+  }
+  return personalURL;
+} 
+
 const generateRandomString = () => {
   let randomString = (Math.random() + 1).toString(36).substring(2, 8);
   return randomString;
