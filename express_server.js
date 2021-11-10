@@ -144,12 +144,16 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-
   // now I need to add the URL into the personal database
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = {longURL, userID:req.cookies["user_id"]};
-  res.redirect(`urls/${shortURL}`);
+  
+  if(req.cookies["user_id"]) {
+    urlDatabase[shortURL] = {longURL, userID:req.cookies["user_id"]};
+    res.redirect(`urls/${shortURL}`);
+  }
+  res.status(418).send("Only Teapots can brew tea!")
+
 });
 
 
@@ -157,8 +161,8 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
   const newlongURL = req.body.newLongURL;
-  const addURLUserId = urlDatabase[req.params.id].userID;
-  if(req.cookies["user_id"] === addURLUserId) {
+  const editURLUserId = urlDatabase[req.params.id].userID;
+  if(req.cookies["user_id"] === editURLUserId) {
     urlDatabase[shortURL].longURL = newlongURL;
     res.redirect('/urls');
   }
