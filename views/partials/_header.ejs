@@ -23,13 +23,23 @@
       </div>
     </form>
     <% } else { %>
-    <form class="form-inline" method="GET" action="/register">
+
+    <form class="form-inline" method="GET" action="/login">
       <div class="form group mr-1">
         <p class="card-text">
-          <button type="login" class="btn btn-outline-dark">Register</button>
+          <button type="login" class="btn btn-outline-dark">Login</button>
         </p>
       </div>
     </form>
+
+    <form class="form-inline" method="GET" action="/register">
+      <div class="form group mr-1">
+        <p class="card-text">
+          <button type="register" class="btn btn-outline-dark">Register</button>
+        </p>
+      </div>
+    </form>
+
     <% } %>
 
 
