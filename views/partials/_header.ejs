@@ -14,10 +14,10 @@
       </div>
     </div>
 
-    <% if (username) { %>
+    <% if (users[user_id]) { %>
     <form class="form-inline" method="POST" action="/logout">
       <div class="form group mr-1">
-        <p class="card-text"> Logged In As: <%= username %>!
+        <p class="card-text"> Logged In As: <%= users[user_id].email %>!
           <button type="logout" class="btn btn-outline-dark ml-3">Logout</button>
         </p>
       </div>
