@@ -77,16 +77,21 @@ const getUserByEmail = (email) => {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if(!req.cookies["user_id"]) {
+    const templateVars = {user_id: req.cookies["user_id"], users};
+    res.render("welcome", templateVars);
+  }else{
+    res.redirect("/urls");
+  }
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 app.get("/urls", (req, res) => {
   const userID = req.cookies["user_id"]
@@ -145,6 +150,10 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 
 });
+
+app.get("/*", (req, res) => {
+  res.redirect("/");
+})
 
 app.post("/urls", (req, res) => {
   // now I need to add the URL into the personal database
