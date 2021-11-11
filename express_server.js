@@ -124,8 +124,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if (req.session.user_id === deleteURLUserId) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
-  } else {
+  } else if (req.session.user_id) {
     res.status(418).send("Don't throw out my tea!");
+  } else {
+    res.status(401).send("Please login to delete your items!");
   }
 });
 
