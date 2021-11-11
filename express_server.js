@@ -11,7 +11,7 @@ const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
-  keys: []
+  keys: ["what is my password", "hello there world"]
 }))
 // app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -221,7 +221,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req,res) => {
-  res.clearCookie("user_id", req.cookies["user_id"]);
+  // res.clearCookie("user_id", req.cookies["user_id"]);
+  req.session = null;
   res.redirect("/urls");
 });
 
