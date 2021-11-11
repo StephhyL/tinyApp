@@ -30,6 +30,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
+
   if (userID) {
     const templateVars = {users, user_id: userID, urls: urlsForUser(userID, urlDatabase)};
     res.render("urls_index", templateVars);
@@ -41,6 +42,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req,res) => {
   const templateVars = {users, user_id: req.session.user_id};
+
   if (req.session.user_id) {
     res.render("urls_new", templateVars);
   } else {
@@ -52,6 +54,7 @@ app.get("/urls/new", (req,res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const personalDb = urlsForUser(req.session.user_id, urlDatabase);
   const shortURL = req.params.shortURL;
+
   if (!req.session.user_id) {
     const loginMessage = {message: "Please login to view your URLs", user_id: req.session.user_id, users};
     res.render("error_login.ejs", loginMessage);
@@ -77,13 +80,14 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req,res) => {
   const templateVars = {users, user_id: req.session.user_id};
+
   res.render("register_new", templateVars);
 });
 
 app.get("/login", (req, res) => {
   const templateVars = {users, user_id: req.session.user_id};
-  res.render("login", templateVars);
 
+  res.render("login", templateVars);
 });
 
 app.get("/*", (req, res) => {
@@ -109,6 +113,7 @@ app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
   const newlongURL = req.body.newLongURL;
   const editURLUserId = urlDatabase[req.params.id].userID;
+
   if (req.session.user_id === editURLUserId) {
     urlDatabase[shortURL].longURL = newlongURL;
     res.redirect('/urls');
@@ -120,6 +125,7 @@ app.post("/urls/:id", (req, res)=>{
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const deleteURLUserId = urlDatabase[req.params.shortURL].userID;
+
   if (req.session.user_id === deleteURLUserId) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
@@ -140,6 +146,7 @@ app.post("/login", (req, res) => {
   }
   
   const comparePass = bcrypt.compareSync(testPassword, users[user].password);
+  
   if (comparePass) {
     req.session.user_id = users[user].id;
     res.redirect("/urls");
