@@ -164,8 +164,9 @@ app.post("/urls/:id", (req, res)=>{
   if(req.session.user_id === editURLUserId) {
     urlDatabase[shortURL].longURL = newlongURL;
     res.redirect('/urls');
+  } else {
+    res.status(418).send("Teapots can't brew coffee!");
   }
-  res.status(418).send("Teapots can't brew coffee!")
 });
 
 
@@ -175,16 +176,15 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if(req.session.user_id === deleteURLUserId){
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
+  } else {
+    res.status(418).send("Don't throw out my tea!");
   }
-  res.status(418).send("Don't throw out my tea!")
 });
 
 app.post("/login", (req, res) => {
   const testEmail = req.body.email;
   const testPassword = req.body.password;
   const user = getUserByEmail(testEmail, users);
-  // users object's key
-  // console.log(user)
   
   if (!users[user]) {
     return res.status(404).send("Error! No user with the email found!");
@@ -194,7 +194,6 @@ app.post("/login", (req, res) => {
   if(comparePass) {
       // res.cookie("user_id", user.id);
       req.session.user_id = users[user].id
-
       res.redirect("/urls");
   } else {
     return res.status(404).send("Error! Invalid password! Please try again.")
@@ -228,16 +227,6 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
   }
 });
-
-
-// app.get("/set", (req, res) => {
-//   const a = 1;
-//   res.send(`a = ${a}`);
-// });
-
-// app.get("/fetch", (req, res) => {
-//   res.send(`a = ${a}`);
-// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
