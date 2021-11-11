@@ -45,7 +45,6 @@ const users = {
   }
 };
 
-console.log('555hased', users["555"].password);
 
 const urlsForUser = (id, database) => {
   // loop through the urlDatabase
@@ -74,10 +73,10 @@ const generateRandomString = () => {
 // };
 
 //return the object value of the user
-const getUserByEmail = (email) => {
-  for (let key in users) {
-    if (email === users[key].email) {
-      return users[key];
+const getUserByEmail = (email, database) => {
+  for (let user in database) {
+    if (email === database[user].email) {
+      return user; // this just returns the key!
     }
   }
   return false;
@@ -202,18 +201,20 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const testEmail = req.body.email;
   const testPassword = req.body.password;
-  const user = getUserByEmail(testEmail);
+  const user = getUserByEmail(testEmail, users);
   // users object's key
   // console.log(user)
   
-  if (!user) {
+  if (!users[user]) {
     return res.status(404).send("Error! No user with the email found!");
   }
   
-  const comparePass = bcrypt.compareSync(testPassword, user.password);
+  const comparePass = bcrypt.compareSync(testPassword, users[user].password);
   if(comparePass) {
       // res.cookie("user_id", user.id);
-      req.session.user_id = user.id
+      console.log("hello")
+      req.session.user_id = users[user].id
+
       res.redirect("/urls");
   } else {
     return res.status(404).send("Error! Invalid password! Please try again.")
@@ -239,7 +240,7 @@ app.post("/register", (req, res) => {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! Please input an email and/or password`);
     return;
-  } else if (getUserByEmail(email)) {
+  } else if (getUserByEmail(email, users)) {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! E-mail already exists`);
     return;
