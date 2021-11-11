@@ -7,6 +7,9 @@ const getUserByEmail = (email, database) => {
   return undefined;
 };
 
+/**
+returns an object of all the URLs created by the specific user
+ */
 const urlsForUser = (id, database) => {
   let personalURLs = {};
   for (let shortURL in database) {
