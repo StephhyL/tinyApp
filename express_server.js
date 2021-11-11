@@ -106,7 +106,7 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
   }else{
     const messageOb = {message: "Please login to view URLs", user_id: req.session.user_id, users}
-    res.render("error.ejs", messageOb)
+    res.render("error_login.ejs", messageOb)
   }
 });
 
@@ -116,7 +116,7 @@ app.get("/urls/new", (req,res) => {
     res.render("urls_new", templateVars);
   }else{
     const messageOb = {message: "Please login to create new URLs", user_id: req.session.user_id, users}
-    res.render("error.ejs", messageOb)
+    res.render("error_login.ejs", messageOb)
   }
 });
 
@@ -125,14 +125,14 @@ app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   if(!req.session.user_id) {
     const loginMessage = {message: "Please login to view your URLs", user_id: req.session.user_id, users}
-    res.render("error.ejs", loginMessage)
+    res.render("error_login.ejs", loginMessage)
   }else if (personalDb[shortURL] === undefined) {
     const messageOb = {message: "Sorry, you do not have this URL", user_id: req.session.user_id, users}
     res.render("error.ejs", messageOb)
   }else{
-  const longURL = personalDb[req.params.shortURL].longURL;
-  const templateVars = {user_id: req.session.user_id,shortURL, longURL, users};
-  res.render("urls_show", templateVars);
+    const longURL = personalDb[req.params.shortURL].longURL;
+    const templateVars = {user_id: req.session.user_id,shortURL, longURL, users};
+    res.render("urls_show", templateVars);
   }
 });
 
@@ -169,8 +169,9 @@ app.post("/urls", (req, res) => {
   if(req.session.user_id) {
     urlDatabase[shortURL] = {longURL, userID:req.session.user_id};
     res.redirect(`urls/${shortURL}`);
+  } else {
+    res.status(418).send("Only Teapots can brew tea!")
   }
-  res.status(418).send("Only Teapots can brew tea!")
 
 });
 
