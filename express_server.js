@@ -4,15 +4,18 @@ const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
 const {urlDatabase, users} = require('./database');
 const {getUserByEmail, urlsForUser, generateRandomString} = require('./helpers');
+
 const app = express();
 const PORT = 8080;
 
+app.set("view engine", "ejs");
+
+// Middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ["what is my password", "hello there world"]
 }));
-app.set("view engine", "ejs");
 
 // GET routes
 app.get("/", (req, res) => {
@@ -106,9 +109,7 @@ app.post("/urls", (req, res) => {
   } else {
     return res.status(418).send("Only Teapots can brew tea!");
   }
-
 });
-
 
 app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
