@@ -16,11 +16,10 @@ app.set("view engine", "ejs");
 
 // GET routes
 app.get("/", (req, res) => {
-  if (!req.session.user_id) {
-    const templateVars = {users, user_id: req.session.user_id};
-    res.render("welcome", templateVars);
-  } else {
+  if (req.session.user_id) {
     res.redirect("/urls");
+  } else {
+    res.redirect("/login");
   }
 });
 
