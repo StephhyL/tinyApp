@@ -3,9 +3,6 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
 const {getUserByEmail} = require('./helpers');
-// const cookieParser = require("cookie-parser");
-// const salt = bcrypt.genSaltSync(10);
-// const hash = bcrypt.hashSync("B4c0/\/", salt);
 const app = express();
 const PORT = 8080;
 
@@ -14,7 +11,6 @@ app.use(cookieSession({
   name: 'session',
   keys: ["what is my password", "hello there world"]
 }))
-// app.use(cookieParser());
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -142,7 +138,6 @@ app.get("/*", (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
-  // now I need to add the URL into the personal database
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   
@@ -156,7 +151,6 @@ app.post("/urls", (req, res) => {
 });
 
 
-//can this be urls/:shortURLs??
 app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
   const newlongURL = req.body.newLongURL;
@@ -171,7 +165,6 @@ app.post("/urls/:id", (req, res)=>{
 
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  //if I am the user, then only I can delete from the masterDB
   const deleteURLUserId = urlDatabase[req.params.shortURL].userID;
   if(req.session.user_id === deleteURLUserId){
     delete urlDatabase[req.params.shortURL];
@@ -216,14 +209,11 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (email === "" || password === "") {
-    res.statusCode = 400;
-    res.send(`${res.statusCode} Error! Please input an email and/or password`);
+    res.status(401).send(`Error! Please input an email and/or password`);
   } else if (getUserByEmail(email, users)) {
-    res.statusCode = 400;
-    res.send(`${res.statusCode} Error! E-mail already exists`);
+    res.status(401).send(`Error! E-mail already exists`);
   }else{
     users[id] = {id, email, password: hashedPassword};
-    // res.cookie("user_id", id);
     req.session.user_id = id;
     res.redirect("/urls");
   }
