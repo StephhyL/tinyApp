@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
 const {urlDatabase, users} = require('./database');
-const {getUserByEmail} = require('./helpers');
+const {getUserByEmail, urlsForUser, generateRandomString} = require('./helpers');
 const app = express();
 const PORT = 8080;
 
@@ -13,7 +13,6 @@ app.use(cookieSession({
   keys: ["what is my password", "hello there world"]
 }))
 app.set("view engine", "ejs");
-
 
 
 const urlsForUser = (id, database) => {
