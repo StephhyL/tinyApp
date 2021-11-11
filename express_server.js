@@ -186,7 +186,10 @@ app.post("/login", (req, res) => {
   const testPassword = req.body.password;
   const user = getUserByEmail(testEmail, users);
   
-  if (!users[user]) {
+  
+  if (testEmail === "" || testPassword === "") {
+    return res.status(404).send("Error! Please enter an email address and/or password!");
+  } else if (!users[user]) {
     return res.status(404).send("Error! No user with the email found!");
   }
   
@@ -215,11 +218,9 @@ app.post("/register", (req, res) => {
   if (email === "" || password === "") {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! Please input an email and/or password`);
-    return;
   } else if (getUserByEmail(email, users)) {
     res.statusCode = 400;
     res.send(`${res.statusCode} Error! E-mail already exists`);
-    return;
   }else{
     users[id] = {id, email, password: hashedPassword};
     // res.cookie("user_id", id);
