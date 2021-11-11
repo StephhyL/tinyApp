@@ -43,7 +43,6 @@ const users = {
 };
 
 const urlsForUser = (id, database) => {
-  // loop through the urlDatabase
   let personalURLs = {};
   for (let shortURL in database) {
     if (id === database[shortURL].userID) {
@@ -70,10 +69,6 @@ app.get("/", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id
@@ -188,7 +183,6 @@ app.post("/login", (req, res) => {
   
   const comparePass = bcrypt.compareSync(testPassword, users[user].password);
   if(comparePass) {
-      // res.cookie("user_id", user.id);
       req.session.user_id = users[user].id
       res.redirect("/urls");
   } else {
@@ -197,7 +191,6 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req,res) => {
-  // res.clearCookie("user_id", req.cookies["user_id"]);
   req.session = null;
   res.redirect("/urls");
 });
