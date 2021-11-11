@@ -17,9 +17,9 @@ app.set("view engine", "ejs");
 // GET routes
 app.get("/", (req, res) => {
   if (req.session.user_id) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   } else {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 });
 
@@ -28,10 +28,10 @@ app.get("/urls", (req, res) => {
 
   if (userID) {
     const templateVars = {users, user_id: userID, urls: urlsForUser(userID, urlDatabase)};
-    res.render("urls_index", templateVars);
+    return res.render("urls_index", templateVars);
   } else {
     const messageOb = {message: "Please login to view URLs", user_id: req.session.user_id, users};
-    res.render("error_login.ejs", messageOb);
+    return res.render("error_login.ejs", messageOb);
   }
 });
 
@@ -39,10 +39,10 @@ app.get("/urls/new", (req,res) => {
   const templateVars = {users, user_id: req.session.user_id};
 
   if (req.session.user_id) {
-    res.render("urls_new", templateVars);
+    return res.render("urls_new", templateVars);
   } else {
     const messageOb = {message: "Please login to create new URLs", user_id: req.session.user_id, users};
-    res.render("error_login.ejs", messageOb);
+    return res.render("error_login.ejs", messageOb);
   }
 });
 
@@ -52,41 +52,47 @@ app.get("/urls/:shortURL", (req, res) => {
 
   if (!req.session.user_id) {
     const loginMessage = {message: "Please login to view your URLs", user_id: req.session.user_id, users};
-    res.render("error_login.ejs", loginMessage);
+    return res.render("error_login.ejs", loginMessage);
   } else if (personalDb[shortURL] === undefined) {
     const messageOb = {message: "Sorry, you do not have this URL", user_id: req.session.user_id, users};
-    res.render("error_url.ejs", messageOb);
+    return res.render("error_url.ejs", messageOb);
   } else {
     const longURL = personalDb[req.params.shortURL].longURL;
     const templateVars = {longURL, users, user_id: req.session.user_id,shortURL};
-    res.render("urls_show", templateVars);
+    return res.render("urls_show", templateVars);
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL] !== undefined) {
     const longURL = urlDatabase[req.params.shortURL].longURL;
-    res.redirect(longURL);
+    return res.redirect(longURL);
   } else {
     const messageOb = {message: "Sorry, URL does not exist", user_id: req.session.user_id, users};
-    res.render("error_url.ejs", messageOb);
+    return res.render("error_url.ejs", messageOb);
   }
 });
 
 app.get("/register", (req,res) => {
   const templateVars = {users, user_id: req.session.user_id};
-
-  res.render("register_new", templateVars);
+  if (req.session.user_id) {
+    return res.redirect('/urls');
+  } else {
+    return res.render("register_new", templateVars);
+  }
 });
 
 app.get("/login", (req, res) => {
   const templateVars = {users, user_id: req.session.user_id};
-
-  res.render("login", templateVars);
+  if (req.session.user_id) {
+    return res.redirect('/urls');
+  } else {
+    return res.render("login", templateVars);
+  }
 });
 
 app.get("/*", (req, res) => {
-  res.redirect("/");
+  return res.redirect("/");
 });
 
 //POST routes
@@ -96,9 +102,9 @@ app.post("/urls", (req, res) => {
   
   if (req.session.user_id) {
     urlDatabase[shortURL] = {longURL, userID:req.session.user_id};
-    res.redirect(`urls/${shortURL}`);
+    return res.redirect(`urls/${shortURL}`);
   } else {
-    res.status(418).send("Only Teapots can brew tea!");
+    return res.status(418).send("Only Teapots can brew tea!");
   }
 
 });
@@ -111,9 +117,9 @@ app.post("/urls/:id", (req, res)=>{
 
   if (req.session.user_id === editURLUserId) {
     urlDatabase[shortURL].longURL = newlongURL;
-    res.redirect('/urls');
+    return res.redirect('/urls');
   } else {
-    res.status(418).send("Teapots can't brew coffee!");
+    return res.status(418).send("Teapots can't brew coffee!");
   }
 });
 
@@ -123,11 +129,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
   if (req.session.user_id === deleteURLUserId) {
     delete urlDatabase[req.params.shortURL];
-    res.redirect("/urls");
+    return res.redirect("/urls");
   } else if (req.session.user_id) {
-    res.status(418).send("Don't throw out my tea!");
+    return res.status(418).send("Don't throw out my tea!");
   } else {
-    res.status(401).send("Please login to delete your items!");
+    return res.status(401).send("Please login to delete your items!");
   }
 });
 
@@ -146,7 +152,7 @@ app.post("/login", (req, res) => {
   
   if (comparePass) {
     req.session.user_id = users[user].id;
-    res.redirect("/urls");
+    return res.redirect("/urls");
   } else {
     return res.status(404).send("Error! Invalid password! Please try again.");
   }
@@ -154,7 +160,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req,res) => {
   req.session = null;
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
@@ -164,13 +170,13 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (email === "" || password === "") {
-    res.status(401).send(`Error! Please input an email and/or password`);
+    return res.status(401).send(`Error! Please input an email and/or password`);
   } else if (getUserByEmail(email, users)) {
-    res.status(401).send(`Error! E-mail already exists`);
+    return es.status(401).send(`Error! E-mail already exists`);
   } else {
     users[id] = {id, email, password: hashedPassword};
     req.session.user_id = id;
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
 });
 
