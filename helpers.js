@@ -4,7 +4,7 @@ const getUserByEmail = (email, database) => {
       return user; // this just returns the key!
     }
   }
-  return false;
+  return undefined;
 };
 
 const urlsForUser = (id, database) => {
