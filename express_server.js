@@ -170,9 +170,9 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (email === "" || password === "") {
-    return res.status(401).send(`Error! Please input an email and/or password`);
+    return res.status(401).send(`Error! Please input an email and/or password.`);
   } else if (getUserByEmail(email, users)) {
-    return es.status(401).send(`Error! E-mail already exists`);
+    return res.status(401).send(`Error! E-mail already exists.`);
   } else {
     users[id] = {id, email, password: hashedPassword};
     req.session.user_id = id;
