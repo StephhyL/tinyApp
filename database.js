@@ -2,12 +2,12 @@ const bcrypt = require('bcryptjs');
 
 const urlDatabase = {
   b6UTxQ: {
-      longURL: "https://www.tsn.ca",
-      userID: "aJ48lW"
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW"
   },
   i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "userRandomID"
+    longURL: "https://www.google.ca",
+    userID: "userRandomID"
   }
 };
 
