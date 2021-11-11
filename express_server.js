@@ -14,7 +14,7 @@ app.use(cookieSession({
 }));
 app.set("view engine", "ejs");
 
-
+// GET routes
 app.get("/", (req, res) => {
   if (!req.session.user_id) {
     const templateVars = {users, user_id: req.session.user_id};
@@ -90,6 +90,7 @@ app.get("/*", (req, res) => {
   res.redirect("/");
 });
 
+//POST routes
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
