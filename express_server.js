@@ -40,6 +40,8 @@ const users = {
   }
 };
 
+console.log('555hased', users["555"].password);
+
 const urlsForUser = (id, database) => {
   // loop through the urlDatabase
   let personalURL = {};
@@ -193,24 +195,23 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const inputEmail = req.body.email;
-  const inputPassword = req.body.password;
-  const hashedInputPw = bcrypt.hashSync(inputPassword, 10);
-  const user = getUserByEmail(inputEmail);
+  const testEmail = req.body.email;
+  const testPassword = req.body.password;
+  const user = getUserByEmail(testEmail);
   // users object's key
   // console.log(user)
-
-  if (user) {
-    if(bcrypt.compare(user.password, hashedInputPw)) {
-      res.cookie("user_id", user.id);
-      // console.log("user_id value of user", user.id)
-      res.redirect("/urls");
-    }
-  } else {
-    res.statusCode = 403;
-    res.send(`${res.statusCode} Error! Invalid E-mail and/or password!`);
+  
+  if (!user) {
+    return res.status(404).send("Error! No user with the email found!");
   }
-
+  
+  const comparePass = bcrypt.compareSync(testPassword, user.password);
+  if(comparePass) {
+      res.cookie("user_id", user.id);
+      res.redirect("/urls");
+  } else {
+    return res.status(404).send("Error! Invalid password! Please try again.")
+  }
 });
 
 app.post("/logout", (req,res) => {
