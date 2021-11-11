@@ -72,6 +72,7 @@ app.get("/u/:shortURL", (req, res) => {
     return res.redirect(longURL);
   } else {
     const messageOb = {message: "Sorry, URL does not exist", user_id: req.session.user_id, users};
+    res.status(404);
     return res.render("error_url.ejs", messageOb);
   }
 });
