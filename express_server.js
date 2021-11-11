@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
+const {getUserByEmail} = require('./helper');
 // const cookieParser = require("cookie-parser");
 // const salt = bcrypt.genSaltSync(10);
 // const hash = bcrypt.hashSync("B4c0/\/", salt);
@@ -45,7 +46,6 @@ const users = {
   }
 };
 
-
 const urlsForUser = (id, database) => {
   // loop through the urlDatabase
   let personalURLs = {};
@@ -60,26 +60,6 @@ const urlsForUser = (id, database) => {
 const generateRandomString = () => {
   let randomString = (Math.random() + 1).toString(36).substring(2, 8);
   return randomString;
-};
-
-//checks if a user exists by their email
-// const exisitingEmail = (email) => {
-//   for (let user in users) {
-//     if (email === users[user].email) {
-//       return true;
-//     }
-//   }
-//   return false;
-// };
-
-//return the object value of the user
-const getUserByEmail = (email, database) => {
-  for (let user in database) {
-    if (email === database[user].email) {
-      return user; // this just returns the key!
-    }
-  }
-  return false;
 };
 
 app.get("/", (req, res) => {
