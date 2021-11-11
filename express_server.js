@@ -17,7 +17,7 @@ app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
   if (!req.session.user_id) {
-    const templateVars = {user_id: req.session.user_id, users};
+    const templateVars = {users, user_id: req.session.user_id};
     res.render("welcome", templateVars);
   } else {
     res.redirect("/urls");
@@ -31,7 +31,7 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
   if (userID) {
-    const templateVars = {user_id: userID, urls: urlsForUser(userID, urlDatabase), users};
+    const templateVars = {users, user_id: userID, urls: urlsForUser(userID, urlDatabase)};
     res.render("urls_index", templateVars);
   } else {
     const messageOb = {message: "Please login to view URLs", user_id: req.session.user_id, users};
@@ -40,7 +40,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req,res) => {
-  const templateVars = {user_id: req.session.user_id, users};
+  const templateVars = {users, user_id: req.session.user_id};
   if (req.session.user_id) {
     res.render("urls_new", templateVars);
   } else {
@@ -60,7 +60,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("error_url.ejs", messageOb);
   } else {
     const longURL = personalDb[req.params.shortURL].longURL;
-    const templateVars = {user_id: req.session.user_id,shortURL, longURL, users};
+    const templateVars = {longURL, users, user_id: req.session.user_id,shortURL};
     res.render("urls_show", templateVars);
   }
 });
@@ -76,12 +76,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req,res) => {
-  const templateVars = {user_id: req.session.user_id, users};
+  const templateVars = {users, user_id: req.session.user_id};
   res.render("register_new", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {user_id: req.session.user_id, users};
+  const templateVars = {users, user_id: req.session.user_id};
   res.render("login", templateVars);
 
 });
@@ -131,7 +131,6 @@ app.post("/login", (req, res) => {
   const testEmail = req.body.email;
   const testPassword = req.body.password;
   const user = getUserByEmail(testEmail, users);
-  
   
   if (testEmail === "" || testPassword === "") {
     return res.status(404).send("Error! Please enter an email address and/or password!");
