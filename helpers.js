@@ -18,7 +18,7 @@ const urlsForUser = (id, database) => {
 };
 
 const generateRandomString = () => {
-  let randomString = (Math.random() + 1).toString(36).substring(2, 8);
+  const randomString = (Math.random() + 1).toString(36).substring(2, 8);
   return randomString;
 };
 
