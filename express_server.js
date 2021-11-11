@@ -84,8 +84,8 @@ const getUserByEmail = (email) => {
 };
 
 app.get("/", (req, res) => {
-  if(!req.cookies["user_id"]) {
-    const templateVars = {user_id: req.cookies["user_id"], users};
+  if(!req.session.user_id) {
+    const templateVars = {user_id: req.session.user_id, users};
     res.render("welcome", templateVars);
   }else{
     res.redirect("/urls");
@@ -101,38 +101,38 @@ app.get("/urls.json", (req, res) => {
 // });
 
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"]
+  const userID = req.session.user_id
   if(userID){
     const templateVars = {user_id: userID, urls: urlsForUser(userID, urlDatabase), users};
     res.render("urls_index", templateVars);
   }else{
-    const messageOb = {message: "Please login to view URLs", user_id: req.cookies["user_id"], users}
+    const messageOb = {message: "Please login to view URLs", user_id: req.session.user_id, users}
     res.render("error.ejs", messageOb)
   }
 });
 
 app.get("/urls/new", (req,res) => {
-  const templateVars = {user_id: req.cookies["user_id"], users};
-  if(req.cookies["user_id"]) {
+  const templateVars = {user_id: req.session.user_id, users};
+  if(req.session.user_id) {
     res.render("urls_new", templateVars);
   }else{
-    const messageOb = {message: "Please login to create new URLs", user_id: req.cookies["user_id"], users}
+    const messageOb = {message: "Please login to create new URLs", user_id: req.session.user_id, users}
     res.render("error.ejs", messageOb)
   }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const personalDb = urlsForUser(req.cookies["user_id"], urlDatabase);
+  const personalDb = urlsForUser(req.session.user_id, urlDatabase);
   const shortURL = req.params.shortURL;
-  if(!req.cookies["user_id"]) {
-    const loginMessage = {message: "Please login to view your URLs", user_id: req.cookies["user_id"], users}
+  if(!req.session.user_id) {
+    const loginMessage = {message: "Please login to view your URLs", user_id: req.session.user_id, users}
     res.render("error.ejs", loginMessage)
   }else if (personalDb[shortURL] === undefined) {
-    const messageOb = {message: "Sorry, you do not have this URL", user_id: req.cookies["user_id"], users}
+    const messageOb = {message: "Sorry, you do not have this URL", user_id: req.session.user_id, users}
     res.render("error.ejs", messageOb)
   }else{
   const longURL = personalDb[req.params.shortURL].longURL;
-  const templateVars = {user_id: req.cookies["user_id"],shortURL, longURL, users};
+  const templateVars = {user_id: req.session.user_id,shortURL, longURL, users};
   res.render("urls_show", templateVars);
   }
 });
@@ -142,18 +142,18 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   }else{
-    const messageOb = {message: "Short URL ID does not exist", user_id: req.cookies["user_id"], users}
+    const messageOb = {message: "Short URL ID does not exist", user_id: req.session.user_id, users}
     res.render("error.ejs", messageOb)
   }
 });
 
 app.get("/register", (req,res) => {
-  const templateVars = {user_id: req.cookies["user_id"], users};
+  const templateVars = {user_id: req.session.user_id, users};
   res.render("register_new", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {user_id: req.cookies["user_id"], users};
+  const templateVars = {user_id: req.session.user_id, users};
   res.render("login", templateVars);
 
 });
@@ -167,8 +167,8 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   
-  if(req.cookies["user_id"]) {
-    urlDatabase[shortURL] = {longURL, userID:req.cookies["user_id"]};
+  if(req.session.user_id) {
+    urlDatabase[shortURL] = {longURL, userID:req.session.user_id};
     res.redirect(`urls/${shortURL}`);
   }
   res.status(418).send("Only Teapots can brew tea!")
@@ -181,7 +181,7 @@ app.post("/urls/:id", (req, res)=>{
   const shortURL = req.params.id;
   const newlongURL = req.body.newLongURL;
   const editURLUserId = urlDatabase[req.params.id].userID;
-  if(req.cookies["user_id"] === editURLUserId) {
+  if(req.session.user_id === editURLUserId) {
     urlDatabase[shortURL].longURL = newlongURL;
     res.redirect('/urls');
   }
@@ -192,7 +192,7 @@ app.post("/urls/:id", (req, res)=>{
 app.post("/urls/:shortURL/delete", (req, res) => {
   //if I am the user, then only I can delete from the masterDB
   const deleteURLUserId = urlDatabase[req.params.shortURL].userID;
-  if(req.cookies["user_id"] === deleteURLUserId){
+  if(req.session.user_id === deleteURLUserId){
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   }
@@ -212,7 +212,8 @@ app.post("/login", (req, res) => {
   
   const comparePass = bcrypt.compareSync(testPassword, user.password);
   if(comparePass) {
-      res.cookie("user_id", user.id);
+      // res.cookie("user_id", user.id);
+      req.session.user_id = user.id
       res.redirect("/urls");
   } else {
     return res.status(404).send("Error! Invalid password! Please try again.")
@@ -243,7 +244,8 @@ app.post("/register", (req, res) => {
     return;
   }else{
     users[id] = {id, email, password: hashedPassword};
-    res.cookie("user_id", id);
+    // res.cookie("user_id", id);
+    req.session.user_id = id;
     res.redirect("/urls");
   }
 });
