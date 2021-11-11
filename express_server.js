@@ -49,13 +49,13 @@ console.log('555hased', users["555"].password);
 
 const urlsForUser = (id, database) => {
   // loop through the urlDatabase
-  let personalURL = {};
+  let personalURLs = {};
   for (let shortURL in database) {
     if (id === database[shortURL].userID) {
-      personalURL[shortURL] = database[shortURL]
+      personalURLs[shortURL] = database[shortURL]
     }
   }
-  return personalURL;
+  return personalURLs;
 } 
 
 const generateRandomString = () => {
