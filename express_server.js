@@ -128,7 +128,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("error_login.ejs", loginMessage)
   }else if (personalDb[shortURL] === undefined) {
     const messageOb = {message: "Sorry, you do not have this URL", user_id: req.session.user_id, users}
-    res.render("error.ejs", messageOb)
+    res.render("error_url.ejs", messageOb)
   }else{
     const longURL = personalDb[req.params.shortURL].longURL;
     const templateVars = {user_id: req.session.user_id,shortURL, longURL, users};
@@ -141,8 +141,8 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   }else{
-    const messageOb = {message: "Short URL ID does not exist", user_id: req.session.user_id, users}
-    res.render("error.ejs", messageOb)
+    const messageOb = {message: "Sorry, URL does not exist", user_id: req.session.user_id, users}
+    res.render("error_url.ejs", messageOb)
   }
 });
 
@@ -213,7 +213,6 @@ app.post("/login", (req, res) => {
   const comparePass = bcrypt.compareSync(testPassword, users[user].password);
   if(comparePass) {
       // res.cookie("user_id", user.id);
-      console.log("hello")
       req.session.user_id = users[user].id
 
       res.redirect("/urls");
@@ -233,9 +232,6 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-
-  console.log("password-->", password);
-  console.log("hashedPassword-->", hashedPassword);
 
   if (email === "" || password === "") {
     res.statusCode = 400;
