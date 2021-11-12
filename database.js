@@ -29,6 +29,7 @@ const users = {
   }
 };
 
+// Updating user passwords with their hashed ones.
 users["userRandomID"].password = bcrypt.hashSync("purple-monkey-dinosaur", 10);
 users["user2RandomID"].password = bcrypt.hashSync("dishwasher-funk", 10);
 users["555"].password = bcrypt.hashSync("c",10);
