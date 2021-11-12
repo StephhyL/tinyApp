@@ -202,7 +202,7 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   // Hashing the password prior to saving to the database.
   const hashedPassword = bcrypt.hashSync(password, 10);
-
+  
   // Checking if the email or password are empty or if an email already exists.
   if (!email || !password) {
     return res.status(401).send('Error! Please input an email and/or password. Please try to <a href="/register">register</a> again.');
