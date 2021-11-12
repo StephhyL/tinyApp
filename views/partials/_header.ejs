@@ -4,14 +4,13 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
           <a class="nav-item nav-link" href="/urls">My URLs</a>
           <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-
+    
       <% if (users[user_id]) { %>
         <form class="form-inline" method="POST" action="/logout">
           <div class="form group mr-1">
@@ -20,26 +19,13 @@
             </p>
           </div>
         </form>
-        <% } else { %>
-        
-        <form class="form-inline" method="GET" action="/login">
-          <div class="form group mr-1">
-            <p class="card-text">
-              <button type="login" class="btn btn-outline-dark">Login</button>
-            </p>
+      <% } else { %>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="justify-content: right;">
+          <div class="navbar-nav">
+              <a class="nav-item nav-link" href="/login">Login</a>
+              <a class="nav-item nav-link" href="/register">Register</a>
           </div>
-        </form>
-
-
-        <form class="form-inline" method="GET" action="/register">
-          <div class="form group mr-1">
-            <p class="card-text">
-              <button type="register" class="btn btn-outline-dark">Register</button>
-            </p>
-          </div>
-                </form>
-                
-          <% } %>
-
+        </div>
+      <% } %>
   </nav>
 </header>
