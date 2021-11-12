@@ -49,10 +49,8 @@ app.get("/urls/new", (req,res) => {
   if (userID) {
     return res.render("urls_new", templateVars);
   }
-  // If not logged in, set error code and render error page.
-  const messageOb = {users, message: "Please login to create new URLs", user_id: userID};
-  res.status(404);
-  return res.render("error_login.ejs", messageOb);
+  // If not logged in, redirect to login page.
+  return res.redirect("/login");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
