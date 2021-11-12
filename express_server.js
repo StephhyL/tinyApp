@@ -207,7 +207,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(401).send('Error! Please input an email and/or password. Please try to <a href="/register">register</a> again.');
   } else if (getUserByEmail(email, users)) {
-    return res.status(401).send('Error! E-mail already exists. Please try to <a href="/register">register</a> again.');
+    return res.status(401).send('Error! E-mail already exists. Please use different email to <a href="/register">register</a>.');
   } else {
     // Resigration successful: create a new user, save to database, create cookie session, redirect to URL page.
     const user = {id, email, password: hashedPassword};
