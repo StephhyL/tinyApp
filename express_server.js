@@ -24,13 +24,13 @@ app.get("/", (req, res) => {
   // Checking if a user is logged in. If logged in, redirect to URL page. If not, redirect to login page.
   if (userID) {
     return res.redirect("/urls");
-  } 
+  }
   return res.redirect("/login");
 });
 
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
-  // Checking if user logged in. If logged in, render to URLs page. 
+  // Checking if user logged in. If logged in, render to URLs page.
   if (userID) {
     const templateVars = {users, user_id: userID, urls: urlsForUser(userID, urlDatabase)};
     return res.render("urls_index", templateVars);
@@ -81,7 +81,7 @@ app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL] !== undefined) {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     return res.redirect(longURL);
-  } 
+  }
 
   // If URL for given id does not exists, set error code and render to error page.
   const messageOb = {message: "Sorry, URL does not exist", user_id: req.session.user_id, users};
@@ -96,7 +96,7 @@ app.get("/register", (req,res) => {
   // Checks if a user is logged in. If so, redirect to URL page. If not, display registration page.
   if (userID) {
     return res.redirect('/urls');
-  } 
+  }
   return res.render("register_new", templateVars);
 });
 
@@ -206,7 +206,7 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   // Checking if the email or password are empty or if an email already exists.
-  if (!email|| !password) {
+  if (!email || !password) {
     return res.status(401).send('Error! Please input an email and/or password. Please try to <a href="/register">register</a> again.');
   } else if (getUserByEmail(email, users)) {
     return res.status(401).send('Error! E-mail already exists. Please try to <a href="/register">register</a> again.');
