@@ -174,9 +174,9 @@ app.post("/login", (req, res) => {
   
   // Checking if the email or password are empty or if an email is not in our database.
   if (!testEmail || !testPassword) {
-    return res.status(404).send("Error! Please enter an email address and/or password!");
+    return res.status(404).send('Error! Please enter an email address and/or password! Please try to <a href="/login">login</a> again.');
   } else if (!users[user]) {
-    return res.status(404).send("Error! No user with the email found!");
+    return res.status(404).send('Error! No user with the email found! Please try to <a href="/login">login</a> again.');
   }
   
   const comparePass = bcrypt.compareSync(testPassword, users[user].password);
@@ -187,7 +187,7 @@ app.post("/login", (req, res) => {
     return res.redirect("/urls");
   } else {
     // If not, set error status and send error message.
-    return res.status(404).send("Error! Invalid password! Please try again.");
+    return res.status(404).send('Error! Invalid password! Please try to <a href="/login">login</a> again.');
   }
 });
 
@@ -207,9 +207,9 @@ app.post("/register", (req, res) => {
 
   // Checking if the email or password are empty or if an email already exists.
   if (!email|| !password) {
-    return res.status(401).send(`Error! Please input an email and/or password.`);
+    return res.status(401).send('Error! Please input an email and/or password. Please try to <a href="/register">register</a> again.');
   } else if (getUserByEmail(email, users)) {
-    return res.status(401).send(`Error! E-mail already exists.`);
+    return res.status(401).send('Error! E-mail already exists. Please try to <a href="/register">register</a> again.');
   } else {
     // Resigration successful: create a new user, save to database, create cookie session, redirect to URL page.
     const user = {id, email, password: hashedPassword};
