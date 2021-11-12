@@ -175,15 +175,15 @@ app.post("/logout", (req,res) => {
   return res.redirect("/urls");
 });
 
-//POST Register, when the user submits the register button, this route is activated.
+//POST Register: route activated when user clicks 'register' button
 app.post("/register", (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  //hashing the password to encrypt it before saving to the db
+  //hashing the password prior to saving to the database
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  //checking for the validations if the email or password are empty or Email is already existing.
+  //checking if the email or password are empty or if an email already exists
   if (!email|| !password) {
     return res.status(401).send(`Error! Please input an email and/or password.`);
   } else if (getUserByEmail(email, users)) {
