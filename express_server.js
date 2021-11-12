@@ -124,10 +124,10 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const userID = req.session.user_id;
   
-  // Checks if user is logged in. If so, redirect to specific shortURL page.
+  // Checks if user is logged in. If so, redirect to URL page.
   if (userID) {
     urlDatabase[shortURL] = {longURL, userID};
-    return res.redirect(`urls/${shortURL}`);
+    return res.redirect(`/urls`);
   }
   // If not logged in, set error code and send error message.
   return res.status(418).send("Only Teapots can brew tea!");
